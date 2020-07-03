@@ -1,0 +1,140 @@
+.header {
+    text-align: center;
+    height: 100px;
+    line-height: 100px;
+    margin-bottom: 40px;
+}
+.header .title {
+    font-size: 28px;
+}
+.calendar-vz {
+    width: 300px;
+    /*box-shadow: 0 10px 22px rgba(0,0,0,0.1), 0 5px 5px rgba(0,0,0,0.1);*/
+    color: #333333;
+    height: unset;
+}
+.calendar-vz .header {
+    height: 58px;
+    font-size: 22px;
+    line-height: 75px;
+    margin-bottom: 28px;
+}
+.calendar-vz .body_month {
+    text-align: center;
+    margin: 10px;
+}
+.calendar-vz .body_month div {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    font-size: 14px;
+    line-height: 50px;
+    margin: 4px;
+    align-content: center;
+    border-radius: 50%;
+    transition: all 0.1s ease-out;
+}
+.calendar-vz .body_month .month:hover,
+.calendar-vz .body_month .month.marked{
+    background-color: #ff671f30;
+    cursor: pointer;
+}
+.calendar-vz .body_month .month[active] {
+    background-color: #ff671f;
+    color: #ffffff;
+}
+.calendar-vz .body_month .quarter[active] {
+    color: #ff671f;
+}
+.calendar-vz .body_month .quarter[active] span {
+    border-color: #ff671f;
+}
+.calendar-vz .header_year {
+    justify-content: space-between;
+    display: flex;
+    background-color: #ff671f;
+    color: #ffffff;
+}
+.calendar-vz .header_year svg {
+    width: 20px;
+    margin: 0 31px;
+    fill: #ffffff60;
+    transition: all 0.1s ease-out;
+}
+.calendar-vz .header_year svg:hover {
+    fill: #ffffff;
+    cursor: pointer;
+}
+.calendar-vz .footer {
+    text-align: center;
+    height: 50px;
+}
+.calendar-vz .footer .ok {
+    width: 50px;
+    height: 30px;
+    margin: 0px auto;
+    line-height: 28px;
+    border: 1px solid;
+    border-radius: 2px;
+    border-color: #d5d5d5;
+    cursor: pointer;
+}
+.modal {
+    display: none;
+}
+.modal.open {
+    display: block;
+    z-index: 1003;
+    position: fixed;
+    top: 10%;
+    left: 0;
+    right: 0;
+    background-color: #fafafa;
+    padding: 0;
+    margin: auto;
+    overflow-y: auto;
+    will-change: top, opacity;
+    border-radius: 2px;
+    -webkit-box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14), 0 9px 46px 8px rgba(0,0,0,0.12), 0 11px 15px -7px rgba(0,0,0,0.2);
+    box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14), 0 9px 46px 8px rgba(0,0,0,0.12), 0 11px 15px -7px rgba(0,0,0,0.2);
+}
+.lock-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 120vh;
+    background-color: rgba(0,0,0,0.45);
+    z-index: 997;
+}
+.calendar-vz .body_month div.quarter {
+    width: 68px;
+    height: 50px;
+    font-size: 11px;
+    border-radius: 0;
+    color: #999999;
+    cursor: pointer;
+}
+.calendar-vz .body_month div.quarter span {
+    border-bottom: 1px dashed #999999;
+    display: block;
+    position: relative;
+    top: -16px;
+    margin: 0 10px;
+}
+.calendar-vz .body_month div.quarter:hover {
+    background-color: unset;
+    color: #000000;
+}
+.calendar-vz .body_month div.quarter:hover span {
+    border-color: #000000;
+}
+.lnk-cal {
+    border-bottom: 1px dashed #000000;
+    cursor: pointer;
+}
+.lnk-cal:hover {
+    color: #ff671f;
+    border-color: #ff671f;
+}
