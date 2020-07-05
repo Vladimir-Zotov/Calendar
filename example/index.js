@@ -2,10 +2,11 @@
 
 let allCal = [];
 class Calendar {
-    constructor(tag, year, month) {
+    constructor(tag, year, options) {
         this.tag = tag;
         this.year = year;
-        this.month = month;
+        this.maxActiveDate = options.maxActiveDate;
+        this.minActiveDate = options.minActiveDate;
         this.startMonth = null;
         this.endMonth = null;
         this.startQuarter = null;
@@ -88,7 +89,15 @@ class Calendar {
         }
         for (let i = startM; i <= endM; i++) {
             let elem = document.querySelector(`#${this.tag} .month[area-month='${i}']`);
-            elem.setAttribute('active', '');
+            if (i < Number(this.minActiveDate.split(', ')[1]) + 1) {
+                this.startMonth = i + 1;
+            }
+            // if (i > Number(this.maxActiveDate.split(', ')[1]) + 1) {
+            //     this.startMonth = i + 1;
+            // }
+            if (!elem.classList.contains('non-active')) {
+                elem.setAttribute('active', '');
+            }
         }
     }
     markHoverMonth(firstActive, endMark) {
@@ -133,6 +142,23 @@ class Calendar {
             quarter.removeAttribute('active');
         }
     }
+    checkMinMax(prevY, nextY) {
+        let maxMonth = Number(this.maxActiveDate.split(', ')[1]) + 1;
+        let minMonth = Number(this.minActiveDate.split(', ')[1]) + 1;
+        for (let m = 1; m <= 12; m++ ){
+            let quarterNum = (m%3 === 0)?m/3:(m-m%3)/3+1;
+            if ( (this.year === Number(this.maxActiveDate.split(', ')[0])) && (m > maxMonth)
+                || (this.year === Number(this.minActiveDate.split(', ')[0])) && (m < minMonth) ) {
+                document.querySelector(`#${this.tag} .month[area-month='${m}']`).classList.add('non-active');
+                document.querySelector(`#${this.tag} .quarter[area-quarter='${quarterNum}']`).classList.add('non-active');
+            } else {
+                document.querySelector(`#${this.tag} .month[area-month='${m}']`).classList.remove('non-active');
+                document.querySelector(`#${this.tag} .quarter[area-quarter='${quarterNum}']`).classList.remove('non-active');
+            }
+        }
+        prevY.style.display = (this.year === Number(this.minActiveDate.split(', ')[0]))?'none':'inline';
+        nextY.style.display = (this.year === Number(this.maxActiveDate.split(', ')[0]))?'none':'inline';
+    }
 }
 
 
@@ -141,6 +167,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
     allCal.forEach(function (cal, i, allCal) {
         let calDiv = document.querySelector(`#${cal.tag}`);
         let txtDiv = document.querySelector(`.${cal.tag}`);
+        let firstTxt = txtDiv.textContent;
         txtDiv.onclick = function () {
             calDiv.classList.add('open');
             calDiv.insertAdjacentHTML('afterend', '<div class="lock-modal"></div>');
@@ -151,6 +178,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
                 cal.resetMonth();
                 cal.resetQuarter();
                 cal.reset();
+                txtDiv.textContent = firstTxt;
             }
             let okDiv = calDiv.querySelector(`.ok`);
             okDiv.onclick = function () {
@@ -173,34 +201,50 @@ document.addEventListener("DOMContentLoaded", function(e) {
         yearTxt.textContent = cal.year;
         let prevY = document.querySelector(`#${cal.tag} .prev svg`);
         let nextY = document.querySelector(`#${cal.tag} .next svg`);
+        let bodyMonth = document.querySelector(`#${cal.tag} .body_month`);
+        cal.checkMinMax(prevY, nextY);
         prevY.onclick = function () {
             cal.minusYear();
             yearTxt.textContent = cal.year;
+            cal.checkMinMax(prevY, nextY);
+            cal.resetMonth();
+            cal.resetQuarter();
+            cal.reset();
         }
         nextY.onclick = function () {
             cal.plusYear();
             yearTxt.textContent = cal.year;
+            cal.checkMinMax(prevY, nextY);
+            cal.resetMonth();
+            cal.resetQuarter();
+            cal.reset();
         }
         // months checking
         let mothDiv = document.querySelectorAll(`#${cal.tag} .month`);
         for (let elem of mothDiv) {
             elem.onclick = function () {
                 if ((cal.startMonth) && (cal.endMonth)) {
-                    cal.startMonth = parseInt(elem.getAttribute('area-month'));
-                    cal.endMonth = null;
-                    cal.setActiveMonth();
-                } else if ((cal.startMonth) && (!cal.endMonth)) {
-                    cal.endMonth = parseInt(elem.getAttribute('area-month'));
-                    let start = cal.startMonth;
-                    if (cal.endMonth < start) {
-                        let temp = start;
-                        cal.startMonth = cal.endMonth;
-                        cal.endMonth = temp;
+                    if (!elem.classList.contains('non-active')) {
+                        cal.startMonth = parseInt(elem.getAttribute('area-month'));
+                        cal.endMonth = null;
+                        cal.setActiveMonth();
                     }
-                    cal.setActiveMonth();
+                } else if ((cal.startMonth) && (!cal.endMonth)) {
+                    if (!elem.classList.contains('non-active')) {
+                        cal.endMonth = parseInt(elem.getAttribute('area-month'));
+                        let start = cal.startMonth;
+                        if (cal.endMonth < start) {
+                            let temp = start;
+                            cal.startMonth = cal.endMonth;
+                            cal.endMonth = temp;
+                        }
+                        cal.setActiveMonth();
+                    }
                 } else if (!cal.startMonth) {
-                    cal.startMonth = parseInt(elem.getAttribute('area-month'));
-                    cal.setActiveMonth();
+                    if (!elem.classList.contains('non-active')) {
+                        cal.startMonth = parseInt(elem.getAttribute('area-month'));
+                        cal.setActiveMonth();
+                    }
                 }
             }
             elem.onmousemove = function () {
@@ -217,27 +261,33 @@ document.addEventListener("DOMContentLoaded", function(e) {
         for (let elem of quarterDiv) {
             elem.onclick = function () {
                 if ((cal.startQuarter) && (cal.endQuarter)) {
-                    cal.startQuarter = parseInt(elem.getAttribute('area-quarter'));
-                    cal.endQuarter = null;
-                    cal.startMonth = cal.startQuarter * 3 - 2;
-                    cal.endMonth = null;
-                    cal.setActiveQuarter();
-                } else if ((cal.startQuarter) && (!cal.endQuarter)) {
-                    cal.endQuarter = parseInt(elem.getAttribute('area-quarter'));
-                    let start = cal.startQuarter;
-                    if (cal.endQuarter < start) {
-                        let temp = start;
-                        cal.startQuarter = cal.endQuarter;
-                        cal.endQuarter = temp;
+                    if (!elem.classList.contains('non-active')) {
+                        cal.startQuarter = parseInt(elem.getAttribute('area-quarter'));
+                        cal.endQuarter = null;
+                        cal.startMonth = cal.startQuarter * 3 - 2;
+                        cal.endMonth = null;
+                        cal.setActiveQuarter();
                     }
-                    cal.startMonth = cal.startQuarter * 3 - 2;
-                    cal.endMonth = cal.endQuarter * 3;
-                    cal.setActiveQuarter();
+                } else if ((cal.startQuarter) && (!cal.endQuarter)) {
+                    if (!elem.classList.contains('non-active')) {
+                        cal.endQuarter = parseInt(elem.getAttribute('area-quarter'));
+                        let start = cal.startQuarter;
+                        if (cal.endQuarter < start) {
+                            let temp = start;
+                            cal.startQuarter = cal.endQuarter;
+                            cal.endQuarter = temp;
+                        }
+                        cal.startMonth = cal.startQuarter * 3 - 2;
+                        cal.endMonth = cal.endQuarter * 3;
+                        cal.setActiveQuarter();
+                    }
                 } else if (!cal.startQuarter) {
-                    cal.startQuarter = parseInt(elem.getAttribute('area-quarter'));
-                    cal.startMonth = cal.startQuarter * 3 - 2;
-                    cal.endMonth = null;
-                    cal.setActiveQuarter();
+                    if (!elem.classList.contains('non-active')) {
+                        cal.startQuarter = parseInt(elem.getAttribute('area-quarter'));
+                        cal.startMonth = cal.startQuarter * 3 - 2;
+                        cal.endMonth = null;
+                        cal.setActiveQuarter();
+                    }
                 }
             }
             elem.onmousemove = function () {

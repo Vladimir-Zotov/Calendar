@@ -17,11 +17,14 @@
     height: 58px;
     font-size: 22px;
     line-height: 75px;
-    margin-bottom: 28px;
+    margin-bottom: 35px;
 }
 .calendar-vz .body_month {
     text-align: center;
     margin: 10px;
+}
+.calendar-vz .month.non-active {
+    color: #999999;
 }
 .calendar-vz .body_month div {
     display: inline-block;
@@ -35,12 +38,12 @@
     border-radius: 50%;
     transition: all 0.1s ease-out;
 }
-.calendar-vz .body_month .month:hover,
-.calendar-vz .body_month .month.marked{
+.calendar-vz .body_month .month:not(.non-active):hover,
+.calendar-vz .body_month .month.marked:not(.non-active){
     background-color: #ff671f30;
     cursor: pointer;
 }
-.calendar-vz .body_month .month[active] {
+.calendar-vz .body_month .month[active]:not(.non-active) {
     background-color: #ff671f;
     color: #ffffff;
 }
@@ -66,15 +69,20 @@
     fill: #ffffff;
     cursor: pointer;
 }
+.calendar-vz .header_year span.next,
+.calendar-vz .header_year span.prev {
+    width: 80px;
+}
 .calendar-vz .footer {
     text-align: center;
     height: 50px;
+    margin: unset;
 }
 .calendar-vz .footer .ok {
     width: 50px;
     height: 30px;
     margin: 0px auto;
-    line-height: 28px;
+    line-height: 30px;
     border: 1px solid;
     border-radius: 2px;
     border-color: #d5d5d5;
@@ -116,14 +124,17 @@
     color: #999999;
     cursor: pointer;
 }
-.calendar-vz .body_month div.quarter span {
+.calendar-vz .body_month div.quarter.non-active {
+    cursor: default;
+}
+.calendar-vz .body_month div.quarter:not(.non-active) span {
     border-bottom: 1px dashed #999999;
     display: block;
     position: relative;
     top: -16px;
     margin: 0 10px;
 }
-.calendar-vz .body_month div.quarter:hover {
+.calendar-vz .body_month div.quarter:not(.non-active):hover {
     background-color: unset;
     color: #000000;
 }

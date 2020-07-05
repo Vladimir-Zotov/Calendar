@@ -33,10 +33,20 @@
 <script type="text/javascript" src="index.js"></script>
 <script>
     // инициируем календарь на странице
-    let myCal1 = new Calendar('my-cal-1', 2020, 7);
+    let now = new Date();
+    now.setMonth(now.getMonth() - 1);
+    let maxActiveDate = now.getFullYear() + ', ' + now.getMonth() + ', 1';
+    let minActiveDate = now.getFullYear() - 1 + ', 0, 1';
+    let myCal1 = new Calendar('my-cal-1', 2020, {
+        'maxActiveDate': maxActiveDate,
+        'minActiveDate': minActiveDate
+    });
     myCal1.init();
 
-    let calFrom = new Calendar('cal-test-2', 2019, 7);
+    let calFrom = new Calendar('cal-test-2', 2019, {
+        'maxActiveDate': '2021, 3, 1',
+        'minActiveDate': '2019, 4, 1'
+    });
     calFrom.init();
 </script>
 </body>
